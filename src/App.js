@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Card from "./components/Card/Card";
+import content from "./Content";
+import { useState } from "react";
+import Modal from "./components/Modal/Modal";
 
 function App() {
+  const [data, setData] = useState(content);
+  const [showModal, setShowModal] = useState(false);
+  const [editingCard, setEditingCard] = useState();
+
+  function deleteCard(clickedID) {
+    setData((prevData) => {
+      return prevData.filter((info) => {
+        return info.id !== clickedID;
+      });
+    });
+  }
+
+  function pickEditingCard(value) {
+    setEditingCard(data.filter((info)=>{
+      return info.id===value;
+    }));
+  }
+
+  function modalHandler(){
+    setShowModal((prevValue) => !prevValue);
+  }
+  
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {showModal && <Modal onClick={modalHandler} card={editingCard} setData={setData} />}
+      {data.map((info,index) => (
+        <Card
+          key={index}
+          id={info.id}
+          name={info.name}
+          email={info.email}
+          phone={info.phone}
+          url={info.url}
+          onDelete={deleteCard}
+          onEdit={pickEditingCard}
+          onClick={modalHandler}
+        />
+      ))}
     </div>
   );
 }
